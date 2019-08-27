@@ -159,11 +159,11 @@ class Testimonials_Custom_Route extends WP_REST_Controller {
 
 		if ( wp_insert_post( $data ) ) {
 
-			$response = new WP_REST_Response( $data, 200 );
+			$response = new WP_REST_Response( $data, 201 );
 
 		} else {
 
-			$response = new WP_Error( 'rest_cannot_create', __( 'Failed to create post.', 'wt-rest-9' ), array( 'status' => 401 ) );
+			$response = new WP_Error( 'rest_cannot_create', __( 'Failed to create post.', 'wt-rest-9' ), array( 'status' => 400 ) );
 
 		}
 
@@ -209,12 +209,12 @@ class Testimonials_Custom_Route extends WP_REST_Controller {
 
 			} else {
 
-				$response = new WP_Error( 'rest_cannot_update', __( 'Failed to update post.', 'wt-rest-9' ), array( 'status' => 401 ) );
+				$response = new WP_Error( 'rest_cannot_update', __( 'Failed to update post.', 'wt-rest-9' ), array( 'status' => 400 ) );
 
 			}
 		} else {
 
-			$response = new WP_Error( 'rest_cannot_update', __( 'Failed to update post. The post ID to be updated is either invalid, not a testimonial, or does not exist.', 'wt-rest-9' ), array( 'status' => 401 ) );
+			$response = new WP_Error( 'rest_cannot_update', __( 'Failed to update post. The post ID to be updated is either invalid, not a testimonial, or does not exist.', 'wt-rest-9' ), array( 'status' => 400 ) );
 
 		}
 
@@ -246,12 +246,12 @@ class Testimonials_Custom_Route extends WP_REST_Controller {
 
 			} else {
 
-				$response = new WP_Error( 'rest_cannot_delete', __( 'Failed to delete post.', 'wt-rest-9' ), array( 'status' => 401 ) );
+				$response = new WP_Error( 'rest_cannot_delete', __( 'Failed to delete post.', 'wt-rest-9' ), array( 'status' => 400 ) );
 
 			}
 		} else {
 
-			$response = new WP_Error( 'rest_cannot_delete', __( 'Failed to delete post. The post ID to be updated is either invalid, not a testimonial, or does not exist.', 'wt-rest-9' ), array( 'status' => 401 ) );
+			$response = new WP_Error( 'rest_cannot_delete', __( 'Failed to delete post. The post ID to be updated is either invalid, not a testimonial, or does not exist.', 'wt-rest-9' ), array( 'status' => 400 ) );
 
 		}
 
