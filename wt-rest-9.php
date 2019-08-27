@@ -20,12 +20,12 @@ class WT_REST_API_9 {
 
 	public function init() {
 
-		add_action( 'rest_api_init', array( $this, 'register_custom_rest_routes' ) );
+		// add_action( 'rest_api_init', array( $this, 'register_custom_rest_routes' ) );
 
 		add_action( 'init', array( $this, 'register_cpt_testimonials' ) );
 		add_action( 'init', array( $this, 'register_meta_testimonials' ) );
 		// add_action( 'plugins_loaded', array( $this, 'get_instance' ) );
-		// 
+
 		add_action( 'add_meta_boxes', array( $this, 'testimonials_metabox' ) );
 		add_action( 'save_post_testimonials', array( $this, 'testimonials_save_metabox' ) );
 
@@ -38,72 +38,13 @@ class WT_REST_API_9 {
 
 	public function deactivate() {}
 
-	public function register_custom_rest_routes() {
-
-		// register_rest_route( 'rpl/v1', '/testimonials/', array(
-		// 'methods' => WP_REST_Server::READABLE,
-		// 'callback' => array( $this, 'get_testimonials' ),
-		// ) );
-
-		// register_rest_route( 'rpl/v1', '/testimonials/(?P<id>\d+)', array(
-		// 'methods' => WP_REST_Server::READABLE,
-		// 'callback' => array( $this, 'get_single_testimonial' ),
-		// ) );
-	}
-
-	public function get_testimonials( $request ) {
-
-		// var_dump($request->get_params());
-
-		$page     = 1;
-		$per_page = 3;
-
-		if ( isset( $request['page'] ) ) {
-			$page = $request['page'];
-		}
-
-		if ( isset( $request['per_page'] ) ) {
-			$per_page = $request['per_page'];
-		}
-
-		$args = array(
-			'post_type'      => 'testimonials',
-			'paged'          => $page,
-			'posts_per_page' => $per_page,
-			'post-status'    => 'publish',
-		);
-
-		$testimonials = new WP_Query( $args );
-
-		return rest_ensure_response( $testimonials );
-
-	}
-
-	public function get_single_testimonial( $request ) {
-
-		if ( isset( $request['id'] ) ) {
-			$post_id = $request['id'];
-		}
-
-		$args = array(
-			'p'           => $post_id,
-			'post_type'   => 'testimonials',
-			'post-status' => 'publish',
-		);
-
-		$testimonial = new WP_Query( $args );
-
-		return rest_ensure_response( $testimonial );
-
-	}
-
 	public function testimonials_metabox() {
 
 		add_meta_box(
-			'testimonials-meta',	// Unique ID
-			'Testimonials Meta',	// Box title
-			array( $this, 'testimonials_metabox_html' ),	// Content callback, must be of type callable
-			'testimonials'			// Post type
+			'testimonials-meta',    // Unique ID
+			'Testimonials Meta',    // Box title
+			array( $this, 'testimonials_metabox_html' ),    // Content callback, must be of type callable
+			'testimonials'          // Post type
 		);
 	}
 
@@ -141,7 +82,7 @@ class WT_REST_API_9 {
 			'testimonials',
 			'rate',
 			array(
-				'type'         => 'string',
+				'type'         => 'integer',
 				'description'  => 'Rate',
 				'single'       => true,
 				'show_in_rest' => true,

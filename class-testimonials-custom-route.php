@@ -17,48 +17,13 @@ class Testimonials_Custom_Route extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
 					'permission_callback' => array( $this, 'get_items_permissions_check' ),
-					'args'                => array(
-						'page'     => array(
-							'required'    => false,
-							'type'        => 'integer',
-							'description' => 'The page of testimonials list',
-						),
-						'per_page' => array(
-							'required'    => false,
-							'type'        => 'integer',
-							'description' => 'The number of testimonials entry to be displayed per page',
-						),
-					),
+					'args'                => $this->get_items_args(),
 				),
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'create_item' ),
 					'permission_callback' => array( $this, 'create_item_permissions_check' ),
-					// 'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::CREATABLE ),
-					'args'                => array(
-						'author'  => array(
-							'required'    => true,
-							'type'        => 'string',
-							'description' => 'The Author of testimonial',
-						),
-						'content' => array(
-							'required'    => true,
-							'type'        => 'string',
-							'description' => 'The Content of testimonial',
-						),
-						'date'    => array(
-							'required'    => true,
-							'type'        => 'string',
-							'description' => 'The creation date of testimonial',
-							'format'      => 'date-time',
-						),
-						'rate'    => array(
-							'required'    => true,
-							'type'        => 'string',
-							'description' => 'The satisfaction rating of testimonial',
-							'enum'        => array( '1', '2', '3', '4', '5' ),
-						),
-					),
+					'args'                => $this->create_item_args(),
 				),
 			)
 		);
@@ -70,66 +35,20 @@ class Testimonials_Custom_Route extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_item' ),
 					'permission_callback' => array( $this, 'get_item_permissions_check' ),
-					'args'                => array(
-						'context' => array(
-							'default' => 'view',
-						),
-						'id'      => array(
-							'required'    => true,
-							'type'        => 'integer',
-							'description' => 'The ID number of testimonial',
-						),
-					),
+					'args'                => $this->get_item_args(),
 				),
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
 					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					// 'args'                => $this->get_endpoint_args_for_item_schema( false ),
-					'args'                => array(
-						'id'      => array(
-							'required'    => true,
-							'type'        => 'integer',
-							'description' => 'The ID number of testimonial to be updated',
-						),
-						'author'  => array(
-							'required'    => false,
-							'type'        => 'string',
-							'description' => 'The Author of testimonial',
-						),
-						'content' => array(
-							'required'    => false,
-							'type'        => 'string',
-							'description' => 'The Content of testimonial',
-						),
-						'date'    => array(
-							'required'    => false,
-							'type'        => 'string',
-							'description' => 'The creation date of testimonial',
-							'format'      => 'date-time',
-						),
-						'rate'    => array(
-							'required'    => false,
-							'type'        => 'string',
-							'description' => 'The satisfaction rating of testimonial',
-							'enum'        => array( '1', '2', '3', '4', '5' ),
-						),
-					),
+					'args'                => $this->update_item_args(),
 				),
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_item' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
-					'args'                => array(
-						'id'    => array(
-							'required'    => true,
-							'type'        => 'integer',
-							'description' => 'The ID number of testimonial to be deleted',
-						),
-						'force' => array(
-							'default' => false,
-						),
-					),
+					'args'                => $this->delete_item_args(),
 				),
 			)
 		);
@@ -232,7 +151,7 @@ class Testimonials_Custom_Route extends WP_REST_Controller {
 			'post_content' => isset( $param['content'] ) ? $param['content'] : '',
 			'post_date'    => isset( $param['date'] ) ? $param['date'] : '',
 			'meta_input'   => array(
-				'rate' => isset( $param['rate'] ) ? $param['rate'] : '',
+				'mb-rate' => isset( $param['rate'] ) ? $param['rate'] : '',
 			),
 			'post_type'    => 'testimonials',
 			'post_status'  => 'publish',
@@ -278,7 +197,7 @@ class Testimonials_Custom_Route extends WP_REST_Controller {
 				'post_content' => isset( $param['content'] ) ? $param['content'] : '',
 				'post_date'    => isset( $param['date'] ) ? $param['date'] : '',
 				'meta_input'   => array(
-					'rate' => isset( $param['rate'] ) ? $param['rate'] : '',
+					'mb-rate' => isset( $param['rate'] ) ? $param['rate'] : '',
 				),
 				'post_type'    => 'testimonials',
 				'post_status'  => 'publish',
@@ -418,7 +337,8 @@ class Testimonials_Custom_Route extends WP_REST_Controller {
 	 *
 	 * @return array
 	 */
-	public function get_collection_params() {
+	public function get_items_args() {
+
 		return array(
 			'page'     => array(
 				'description'       => 'Current page of the collection.',
@@ -432,11 +352,101 @@ class Testimonials_Custom_Route extends WP_REST_Controller {
 				'default'           => 10,
 				'sanitize_callback' => 'absint',
 			),
-			'search'   => array(
-				'description'       => 'Limit results to those matching a string.',
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
+		);
+
+	}
+
+	public function get_item_args() {
+
+		return array(
+			'context' => array(
+				'default' => 'view',
+			),
+			'id'      => array(
+				'required'    => true,
+				'type'        => 'integer',
+				'description' => 'The ID number of testimonial',
 			),
 		);
+
 	}
+
+	public function create_item_args() {
+
+		return array(
+			'author'  => array(
+				'required'    => true,
+				'type'        => 'string',
+				'description' => 'The Author of testimonial',
+			),
+			'content' => array(
+				'required'    => true,
+				'type'        => 'string',
+				'description' => 'The Content of testimonial',
+			),
+			'date'    => array(
+				'required'    => true,
+				'type'        => 'string',
+				'description' => 'The creation date of testimonial',
+				'format'      => 'date-time',
+			),
+			'rate'    => array(
+				'required'    => true,
+				'type'        => 'string',
+				'description' => 'The satisfaction rating of testimonial',
+				'enum'        => array( '1', '2', '3', '4', '5' ),
+			),
+		);
+
+	}
+
+	public function update_item_args() {
+
+		return array(
+			'id'      => array(
+				'required'    => true,
+				'type'        => 'integer',
+				'description' => 'The ID number of testimonial to be updated',
+			),
+			'author'  => array(
+				'required'    => false,
+				'type'        => 'string',
+				'description' => 'The Author of testimonial',
+			),
+			'content' => array(
+				'required'    => false,
+				'type'        => 'string',
+				'description' => 'The Content of testimonial',
+			),
+			'date'    => array(
+				'required'    => false,
+				'type'        => 'string',
+				'description' => 'The creation date of testimonial',
+				'format'      => 'date-time',
+			),
+			'rate'    => array(
+				'required'    => false,
+				'type'        => 'string',
+				'description' => 'The satisfaction rating of testimonial',
+				'enum'        => array( '1', '2', '3', '4', '5' ),
+			),
+		);
+
+	}
+
+	public function delete_item_args() {
+
+		return array(
+			'id'    => array(
+				'required'    => true,
+				'type'        => 'integer',
+				'description' => 'The ID number of testimonial to be deleted',
+			),
+			'force' => array(
+				'default' => false,
+			),
+		);
+
+	}
+
 }
