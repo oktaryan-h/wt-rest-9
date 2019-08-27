@@ -185,7 +185,7 @@ class Testimonials_Custom_Route extends WP_REST_Controller {
 
 		$param = $request->get_params();
 
-		$post_id = isset( $params['id'] ) ? $params['id'] : null;
+		$post_id = isset( $param['id'] ) ? $param['id'] : null;
 
 		$item = get_post( $post_id );
 
